@@ -1,0 +1,45 @@
+name: Improve SEO metadata
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Add SEO metadata if missing
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<!-- GYANENDRA-SEO-ENHANCED -->'
+          if marker in s:
+              raise SystemExit(0)
+          seo = '''<!-- GYANENDRA-SEO-ENHANCED -->
+          <meta name="robots" content="index,follow,max-image-preview:large">
+          <link rel="canonical" href="https://gyanendraconsultancy-cyber.github.io/gyanendra-consultancy/">
+          <meta property="og:type" content="website">
+          <meta property="og:title" content="Gyanendra Consultancy | Consulting That Drives Success">
+          <meta property="og:description" content="Recruitment, contract staffing, RPO and payroll/HR outsourcing solutions across India. Offices in Delhi, Bhopal and Pune. Since 2020.">
+          <meta property="og:url" content="https://gyanendraconsultancy-cyber.github.io/gyanendra-consultancy/">
+          <script type="application/ld+json">
+          {"@context":"https://schema.org","@type":"EmploymentAgency","name":"Gyanendra Consultancy","url":"https://gyanendraconsultancy-cyber.github.io/gyanendra-consultancy/","email":"gyanendra.consultancy@gmail.com","telephone":"+91-9599640415","description":"Recruitment consultancy providing permanent recruitment, IT and Non-IT recruitment, executive search, contract staffing, RPO and payroll/HR outsourcing support across India.","slogan":"Consulting That Drives Success","foundingDate":"2020","areaServed":"IN","sameAs":["https://www.linkedin.com/company/gyanendra-consultancy/","https://www.instagram.com/gyanendra_consultancy/","https://www.facebook.com/profile.php?id=61592371514582","https://www.youtube.com/@Gyanendra_consultancy"]}
+          </script>'''
+          s = s.replace('</head>', seo + '\n</head>', 1)
+          p.write_text(s, encoding='utf-8')
+      - name: Commit SEO enhancement
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Enhance homepage SEO and structured data"
+          git push
