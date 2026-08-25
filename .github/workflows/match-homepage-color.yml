@@ -1,0 +1,35 @@
+name: Match homepage color to supplied image
+
+on:
+  push:
+    paths:
+      - '.github/workflows/match-homepage-color.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Match homepage background
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '.hero{background:linear-gradient(135deg,#fbfaf6,#fff 60%,#f4f9fd);'
+          new = '.hero{background:#fbfaf6;'
+          if old in s:
+              s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit homepage change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Match homepage background to supplied image"
+          git push
