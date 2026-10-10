@@ -23,21 +23,20 @@ jobs:
         run: |
           from pathlib import Path
           replacements = {
-              '#fffffffff':'#ffffff',
               '#155b32':'#155b32', '#082d1b':'#0b3d21', '#e9ad0a':'#e9ad0a',
               '#fbfaf6':'#f3faf5', '#17251d':'#10351f', '#66736a':'#4f6f5a',
-              '#e5e4dc':'#d7eadc', '#fff':'#ffffff', '#ffffff':'#ffffff',
-              '#f8f4e8':'#eef8f1', '#eef5f0':'#eef8f1', '#9a7200':'#c18f00',
-              '#dce9df':'#d9efdf', '#efe6d4':'#e7f3e9', '#b96b1d':'#155b32',
-              '#1d1d1b':'#10351f', '#536057':'#4f6f5a', '#dedbd1':'#d7eadc',
-              '#d8d4ca':'#d7eadc', '#7b837d':'#4f6f5a',
+              '#e5e4dc':'#d7eadc', '#f8f4e8':'#eef8f1', '#eef5f0':'#eef8f1',
+              '#9a7200':'#c18f00', '#dce9df':'#d9efdf', '#efe6d4':'#e7f3e9',
+              '#b96b1d':'#155b32', '#1d1d1b':'#10351f', '#536057':'#4f6f5a',
+              '#dedbd1':'#d7eadc', '#d8d4ca':'#d7eadc', '#7b837d':'#4f6f5a',
               '#b9cabe':'#b9d8c1', '#91a79a':'#91b79b', '#cbd9cf':'#cfe4d4',
               '#dcebe1':'#d9efdf', '#e8e4d9':'#d7eadc', '#f1f6f2':'#eaf6ed',
               '#edf5ef':'#e6f4e9', '#f6f4e8':'#f3faf5', '#faf8f0':'#f3faf5',
               '#f5cb55':'#f5c934', '#17311f':'#10351f', '#29452f':'#315d3f',
               '#425047':'#315d3f', '#4e5e54':'#4f6f5a', '#56645b':'#4f6f5a',
               '#7a847d':'#4f6f5a', '#e5eee6':'#d9efdf', '#edf5ee':'#e6f4e9',
-              '#f6edc9':'#eaf6ed', '#e6e8e2':'#d7eadc', '#dfe4de':'#d7eadc', '#ece9df':'#d7eadc'
+              '#f6edc9':'#eaf6ed', '#e6e8e2':'#d7eadc', '#dfe4de':'#d7eadc',
+              '#ece9df':'#d7eadc', '#fffffffff':'#ffffff'
           }
           for p in [Path('index.html'),Path('about.html'),Path('services.html'),Path('contact.html')]:
               if p.exists():
