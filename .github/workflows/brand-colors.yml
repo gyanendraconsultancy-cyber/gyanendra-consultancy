@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply green, light green, yellow and white palette and fixed footer
+      - name: Apply Gyanendra brand palette, footer and formal industry names
         shell: python
         run: |
           from pathlib import Path
@@ -38,11 +38,23 @@ jobs:
               '#f6edc9':'#eaf6ed', '#e6e8e2':'#d7eadc', '#dfe4de':'#d7eadc',
               '#ece9df':'#d7eadc', '#fffffffff':'#ffffff'
           }
+          industry_names = {
+              'IT &amp; Technology':'Information Technology &amp; Technology Services',
+              'BPO &amp; Customer Support':'Business Process Outsourcing (BPO) &amp; Customer Support',
+              'Sales &amp; Business Development':'Sales &amp; Business Development',
+              'Manufacturing':'Manufacturing &amp; Industrial Services',
+              'Healthcare':'Healthcare &amp; Life Sciences',
+              'Media &amp; Digital':'Media, Digital &amp; Marketing',
+              'Retail &amp; Operations':'Retail, E-commerce &amp; Operations',
+              'Corporate Functions':'Corporate &amp; Professional Services'
+          }
           for p in [Path('index.html'),Path('about.html'),Path('services.html'),Path('contact.html')]:
               if not p.exists():
                   continue
               s=p.read_text(encoding='utf-8')
               for a,b in replacements.items():
+                  s=s.replace(a,b)
+              for a,b in industry_names.items():
                   s=s.replace(a,b)
               if 'footer{position:fixed;' not in s and 'footer{background:' in s:
                   s=s.replace('footer{background:', 'footer{position:fixed;left:0;right:0;bottom:0;z-index:50;background:')
@@ -50,11 +62,11 @@ jobs:
                   footer_script='''<script id="fixed-footer-spacing">(function(){function fitFooter(){var f=document.querySelector('footer');if(f){document.body.style.paddingBottom=f.offsetHeight+'px';}}window.addEventListener('load',fitFooter);window.addEventListener('resize',fitFooter);fitFooter();})();</script>'''
                   s=s.replace('</body>', footer_script+'</body>')
               p.write_text(s,encoding='utf-8')
-      - name: Commit palette and footer update
+      - name: Commit update
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html about.html services.html contact.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Fix Gyanendra footer visibility and CTA contrast [skip ci]'
+          git commit -m 'Use formal industry names and improve footer layout [skip ci]'
           git push
