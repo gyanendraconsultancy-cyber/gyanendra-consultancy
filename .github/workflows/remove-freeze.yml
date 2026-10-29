@@ -1,0 +1,38 @@
+name: Remove Sticky Header and Fixed Footer
+
+on:
+  push:
+    paths:
+      - 'trigger-remove-freeze.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  remove-freeze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove fixed header and footer styles
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          for p in [Path('index.html'), Path('about.html'), Path('services.html'), Path('contact.html')]:
+              if not p.exists():
+                  continue
+              s = p.read_text(encoding='utf-8')
+              s = s.replace('header{position:sticky;top:0;z-index:20;', 'header{')
+              s = s.replace('footer{position:fixed;left:0;right:0;bottom:0;z-index:50;', 'footer{')
+              s = s.replace('footer{position:fixed;', 'footer{')
+              s = re.sub(r'<script id="fixed-footer-spacing">.*?</script>', '', s, flags=re.S)
+              p.write_text(s, encoding='utf-8')
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html about.html services.html contact.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Remove sticky header and fixed footer'
+          git push
