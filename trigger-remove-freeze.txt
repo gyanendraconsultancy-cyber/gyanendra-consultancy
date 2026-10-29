@@ -1,0 +1,1 @@
+Trigger removal of sticky header and fixed footer.
