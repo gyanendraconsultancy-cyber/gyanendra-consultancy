@@ -1,0 +1,36 @@
+name: Apply Approved Gyanendra Logo
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-logo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-logo-references:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace old logo references
+        shell: python
+        run: |
+          from pathlib import Path
+          for name in ['index.html', 'about.html', 'services.html', 'contact.html']:
+              p = Path(name)
+              if not p.exists():
+                  continue
+              s = p.read_text(encoding='utf-8')
+              s2 = s.replace('logo.jpg', 'assets/gyanendra-logo.svg')
+              if s2 != s:
+                  p.write_text(s2, encoding='utf-8')
+      - name: Commit changes
+        run: |
+          git config user.name 'gyanendraconsultancy-cyber'
+          git config user.email 'gyanendra.consultancy@gmail.com'
+          git add index.html about.html services.html contact.html
+          git diff --cached --quiet || git commit -m 'Use approved logo across website pages'
+          git diff --cached --quiet || git push
